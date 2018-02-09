@@ -8,6 +8,5 @@ FileWriter::FileWriter(const std::string& filename)
 
 void FileWriter::Handle(const unsigned char* packetData, unsigned size)
 {
-  Profile profile("Write");
   Output.Write(packetData, size);
 }
