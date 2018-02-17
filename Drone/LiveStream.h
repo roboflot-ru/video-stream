@@ -15,5 +15,6 @@ public:
   virtual bool IsStarted() const;
 
 private:
+  Encoder& EncoderEngine;
   bool Started;
 };

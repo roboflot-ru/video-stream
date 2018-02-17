@@ -1,12 +1,17 @@
 ﻿#include "LiveStream.h"
 
 LiveStream::LiveStream(Encoder& encoder)
-  : Started(false)
+  : EncoderEngine(encoder)
+  , Started(false)
 {
 }
 
 void LiveStream::Handle(const unsigned char* data, unsigned size)
 {
+  if (Started)
+  {
+    EncoderEngine.Encode(data, size);
+  }
 }
 
 void LiveStream::Start()
