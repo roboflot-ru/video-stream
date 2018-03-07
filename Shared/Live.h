@@ -8,10 +8,11 @@
 class Live
 {
 public:
-  Live(Buffer& payloadBuffer);
+  Live(Buffer& payloadBuffer, unsigned port);
   ~Live();
 
 private:
   Buffer& PayloadBuffer;
+  unsigned Port;
   std::thread RtspServerThread;
 };

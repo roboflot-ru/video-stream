@@ -20,4 +20,5 @@ private:
   const unsigned Fps;
   PacketHandler& Handler;
   COMPONENT_T* VideoEncode;
+  bool FirstPacket;
 };

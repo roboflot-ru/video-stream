@@ -2,6 +2,7 @@
 
 #include "Camera.h"
 
+#include <list>
 #include <memory>
 #include <thread>
 #include <vector>
@@ -15,6 +16,10 @@ public:
   ~RaspberryCamera();
   virtual void Capture();
   virtual void AddHandler(std::shared_ptr<FrameHandler> handler);
+  virtual void RemoveHandler(std::shared_ptr<FrameHandler> handler);
+  virtual unsigned GetWidth() const;
+  virtual unsigned GetHeight() const;
+  virtual unsigned GetFps() const;
 
 private:
   void Handle();
@@ -28,6 +33,6 @@ private:
   const unsigned Fps;
   raspicam::RaspiCam RaspiCamera;
   std::vector<unsigned char> Data;
-  std::vector<std::shared_ptr<FrameHandler> > Handlers;
+  std::list<std::shared_ptr<FrameHandler> > Handlers;
   std::thread CaptureThread;
 };

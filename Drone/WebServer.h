@@ -1,5 +1,9 @@
 ﻿#pragma once
 
+#include "Camera.h"
+#include "LiveSender.h"
+#include "Stream.h"
+#include "RaspberryEncoder.h"
 #include "StartController.h"
 
 #include <memory>
@@ -8,7 +12,7 @@
 class WebServer
 {
 public:
-  WebServer(StartController& record, StartController& live);
+  WebServer(int port, Camera& camera, StartController& record);
   void Run();
 
 private:
@@ -18,8 +22,15 @@ private:
   void GetStartLive(const std::shared_ptr<restbed::Session> session);
   void GetStopLive(const std::shared_ptr<restbed::Session> session);
 
+  void StartLive(unsigned width, unsigned height, unsigned bitrate, unsigned fps, const std::string& server, unsigned port);
+  void StopLive();
+
 private:
+  int Port;
+  Camera& CameraCapture;
   StartController& Record;
-  StartController& Live;
   restbed::Service WebService;
+  std::shared_ptr<LiveSender> Sender;
+  std::shared_ptr<RaspberryEncoder> Encoder;
+  std::shared_ptr<Stream> LiveStream;
 };

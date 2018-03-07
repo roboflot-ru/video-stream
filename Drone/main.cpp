@@ -1,10 +1,8 @@
 ﻿#include "Config.h"
 #include "FileWriter.h"
-#include "LiveSender.h"
-#include "LiveStream.h"
 #include "RaspberryCamera.h"
 #include "RaspberryEncoder.h"
-#include "RecordStream.h"
+#include "Stream.h"
 #include "WebServer.h"
 
 #include <iostream>
@@ -15,30 +13,30 @@ int main(int argc, char **argv)
   {
     Config config;
 
-    std::string recordPath = config.GetString("record", "file_name");
+    int cameraWidth = config.GetInt("camera", "width");
+    int cameraHeight = config.GetInt("camera", "height");
+    int cameraFps = config.GetInt("camera", "fps");
+    bool recordStarted = config.GetInt("record", "started") == 1;
+    std::string recordPath = config.GetString("record", "path");
     int width = config.GetInt("record", "width");
     int height = config.GetInt("record", "height");
     int bitrate = config.GetInt("record", "bitrate");
     int fps = config.GetInt("record", "fps");
+    int clipTime = config.GetInt("record", "clip_time");
+    int clipLimit = config.GetInt("record", "clip_limit");
 
-    int liveWidth = config.GetInt("live", "width");
-    int liveHeight = config.GetInt("live", "height");
-    int liveBitrate = config.GetInt("live", "bitrate");
+    int httpServerPort = config.GetInt("common", "http_server_port");
 
-    FileWriter fileWriter(recordPath);
-    LiveSender liveSender;
+    FileWriter fileWriter(recordPath, clipTime, clipLimit);
     RaspberryEncoder recordEncoder(width, height, bitrate, fps, fileWriter);
-    RaspberryEncoder liveEncoder(liveWidth, liveHeight, liveBitrate, fps, liveSender);
 
-    auto recordStream = std::make_shared<RecordStream>(recordEncoder);
-    auto liveStream = std::make_shared<LiveStream>(liveEncoder);
+    auto recordStream = std::make_shared<Stream>(recordEncoder, cameraWidth, cameraHeight, cameraFps, width, height, fps, recordStarted);
 
-    RaspberryCamera camera(width, height, fps);
+    RaspberryCamera camera(cameraWidth, cameraHeight, cameraFps);
     camera.AddHandler(recordStream);
-    camera.AddHandler(liveStream);
     camera.Capture();
 
-    WebServer webServer(*recordStream, *liveStream);
+    WebServer webServer(httpServerPort, camera, *recordStream);
     webServer.Run();
   }
   catch (const std::exception& e)

@@ -12,8 +12,9 @@ extern "C" {
 #include <netdb.h> 
 }
 
-UdpSendSocket::UdpSendSocket(unsigned port)
+UdpSendSocket::UdpSendSocket(const std::string& host, unsigned port)
   : Port(port)
+  , Host(host)
   , SendSocket(-1)
 {
 }
@@ -43,7 +44,7 @@ void UdpSendSocket::Connect()
 
   si_me.sin_family = AF_INET;
   si_me.sin_port = htons(Port);
-  if (inet_aton("78.155.199.72", &si_me.sin_addr) == 0)
+  if (inet_aton(Host.c_str(), &si_me.sin_addr) == 0)
   {
     throw std::runtime_error("failed inet_aton\n");
   }
@@ -66,4 +67,14 @@ unsigned UdpSendSocket::Send(const unsigned char* data, unsigned size)
   }
 
   return 0;
+}
+
+std::string UdpSendSocket::GetHost() const
+{
+  return Host;
+}
+
+unsigned UdpSendSocket::GetPort() const
+{
+  return Port;
 }

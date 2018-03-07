@@ -15,6 +15,10 @@ PacketFrameSource::~PacketFrameSource()
 
 void PacketFrameSource::doGetNextFrame()
 {
+  if (!PayloadBuffer.GetDataSize())
+  {
+    return;
+  }
   fFrameSize = std::min(fMaxSize, PayloadBuffer.GetDataSize());
   memcpy(fTo, PayloadBuffer.GetData(), fFrameSize);
   PayloadBuffer.Consolidate(fFrameSize);

@@ -15,6 +15,7 @@ RaspberryEncoder::RaspberryEncoder(unsigned width, unsigned height, unsigned bit
   , Bitrate(bitrate)
   , Fps(fps)
   , Handler(packetHandler)
+  , FirstPacket(true)
 {
   bcm_host_init();
 
@@ -102,6 +103,13 @@ void RaspberryEncoder::Encode(const unsigned char* data, unsigned size)
   if (err != OMX_ErrorNone)
   {
     std::cout << "Failed to fill output buffer, error " << err << std::endl;
+    return;
+  }
+
+  if (FirstPacket)
+  {
+    Handler.InitHeader(out->pBuffer, out->nFilledLen);
+    FirstPacket = false;
     return;
   }
 

@@ -12,6 +12,8 @@ extern "C" {
 #include <netdb.h> 
 }
 
+#include <iostream>
+
 UdpListenSocket::UdpListenSocket(unsigned port)
   : Port(port)
   , ListenSocket(-1)
@@ -35,11 +37,10 @@ void UdpListenSocket::Connect()
 
   if (ListenSocket == -1)
   {
-    throw std::runtime_error("failed to create incoming UDP socket\n");
+    throw std::runtime_error("failed to create incoming UDP socket " + std::to_string(errno) + " " + strerror(errno) + "\n");
   }
 
   struct sockaddr_in si_me;
-  // zero out the structure
   memset((char *)&si_me, 0, sizeof(si_me));
 
   si_me.sin_family = AF_INET;
@@ -62,6 +63,7 @@ unsigned UdpListenSocket::Listen(unsigned char* data, unsigned size)
     ssize_t count = recvfrom(ListenSocket, data, size, 0, (struct sockaddr*)&src_addr, &src_addr_len);
     if (count < 0)
     {
+      std::cout << "received zero buffer " << std::to_string(errno) << " " << strerror(errno) << std::endl;
       if (errno == EAGAIN)
       {
         Connect();

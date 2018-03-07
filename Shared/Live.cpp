@@ -9,13 +9,14 @@
 #include <iostream>
 #include <vector>
 
-Live::Live(Buffer& payloadBuffer)
+Live::Live(Buffer& payloadBuffer, unsigned port)
   : PayloadBuffer(payloadBuffer)
+  , Port(port)
 {
   TaskScheduler* scheduler = BasicTaskScheduler::createNew();
   UsageEnvironment* env = BasicUsageEnvironment::createNew(*scheduler);
 
-  RTSPServer* rtspServer = RTSPServer::createNew(*env, 8554, NULL);
+  RTSPServer* rtspServer = RTSPServer::createNew(*env, Port, NULL);
   if (rtspServer == NULL)
   {
     throw std::runtime_error(std::string("Failed to create RTSP server: ") + env->getResultMsg());
@@ -30,9 +31,16 @@ Live::Live(Buffer& payloadBuffer)
   {
   }
 
-  auto eventLoop = [&env]()
+  auto eventLoop = [env]()
   {
-    env->taskScheduler().doEventLoop();
+    try
+    {
+      env->taskScheduler().doEventLoop();
+    }
+    catch (const std::exception& e)
+    {
+      std::cout << e.what() << std::endl;
+    }
   };
   RtspServerThread = std::thread(eventLoop);
 }

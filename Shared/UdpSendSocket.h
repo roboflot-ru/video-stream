@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string> 
+
 extern "C" {
 #include <arpa/inet.h>
 #include <fcntl.h>
@@ -11,14 +13,18 @@ extern "C" {
 class UdpSendSocket
 {
 public:
-  UdpSendSocket(unsigned port);
+  UdpSendSocket(const std::string& host, unsigned port);
   ~UdpSendSocket();
 
   void Connect();
   unsigned Send(const unsigned char* data, unsigned size);
 
+  std::string GetHost() const;
+  unsigned GetPort() const;
+
 private:
-  unsigned Port;
+  const std::string Host;
+  const unsigned Port;
   int SendSocket;
   sockaddr_in si_me;
 };
