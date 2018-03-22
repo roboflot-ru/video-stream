@@ -2,6 +2,7 @@
 
 #include "LiveReciever.h"
 
+#include <map>
 #include <memory>
 #include <restbed>
 
@@ -14,9 +15,10 @@ public:
 private:
   void GetRegister(const std::shared_ptr<restbed::Session> session);
   void GetUnregister(const std::shared_ptr<restbed::Session> session);
+  void GetStatus(const std::shared_ptr<restbed::Session> session);
 
 private:
   int Port;
   restbed::Service WebService;
-  std::shared_ptr<LiveReciever> Reciever;
+  std::map<std::string, std::shared_ptr<LiveReciever> > Recievers;
 };

@@ -8,7 +8,7 @@
 class Live
 {
 public:
-  Live(Buffer& payloadBuffer, unsigned port);
+  Live(Buffer& payloadBuffer, unsigned port, const std::string& uid);
   ~Live();
 
 private:

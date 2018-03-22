@@ -9,7 +9,7 @@
 #include <iostream>
 #include <vector>
 
-Live::Live(Buffer& payloadBuffer, unsigned port)
+Live::Live(Buffer& payloadBuffer, unsigned port, const std::string& uid)
   : PayloadBuffer(payloadBuffer)
   , Port(port)
 {
@@ -23,7 +23,7 @@ Live::Live(Buffer& payloadBuffer, unsigned port)
   }
 
   H264Subsession *h264Subsession = new H264Subsession(*env, PayloadBuffer);
-  ServerMediaSession* sms = ServerMediaSession::createNew(*env, "h264Stream", "h264Stream", "Drone live stream session");
+  ServerMediaSession* sms = ServerMediaSession::createNew(*env, uid.c_str(), uid.c_str(), "Drone live stream session");
   sms->addSubsession(h264Subsession);
   rtspServer->addServerMediaSession(sms);
 
