@@ -6,7 +6,7 @@
 #include <string.h>
 
 LiveSender::LiveSender(const std::string& host, unsigned port)
-  : PacketCount(0)
+  : PacketCount(1)
   , Socket(host, port)
 {
   Socket.Connect();

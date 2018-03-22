@@ -11,7 +11,7 @@
 class LiveReciever
 {
 public:
-  LiveReciever(unsigned portIn, unsigned portOut);
+  LiveReciever(unsigned portIn, unsigned portOut, const std::string& uid);
   ~LiveReciever();
 
 private:
@@ -23,6 +23,7 @@ private:
 
 private:
   bool Canceled;
+  bool Started;
   LockedBuffer PayloadBuffer;
   Live RtspLive;
   UdpListenSocket ListenSocket;

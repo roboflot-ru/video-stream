@@ -68,13 +68,13 @@ void WebServer::GetStatus(const std::shared_ptr<restbed::Session> session)
 void WebServer::GetStartRecord(const std::shared_ptr<restbed::Session> session)
 {
   Record.Start();
-  session->close(200);
+  session->close(200, "{status: \"ok\"}\n");
 }
 
 void WebServer::GetStopRecord(const std::shared_ptr<restbed::Session> session)
 {
   Record.Stop();
-  session->close(200);
+  session->close(200, "{status: \"ok\"}\n");
 }
 
 void WebServer::GetStartLive(const std::shared_ptr<restbed::Session> session)
@@ -99,11 +99,11 @@ void WebServer::GetStartLive(const std::shared_ptr<restbed::Session> session)
     }
 
     StartLive(width, height, bitrate, framerate, server, port);
-    session->close(200, "{status: \"ok\"}");
+    session->close(200, "{status: \"ok\"}\n");
   }
   catch (const std::exception& e)
   {
-    std::string errorString = std::string("{status: \"") + e.what() + std::string("\"}");
+    std::string errorString = std::string("{status: \"") + e.what() + std::string("\"}\n");
     session->close(500, errorString.c_str());
   }
 }
@@ -111,7 +111,7 @@ void WebServer::GetStartLive(const std::shared_ptr<restbed::Session> session)
 void WebServer::GetStopLive(const std::shared_ptr<restbed::Session> session)
 {
   StopLive();
-  session->close(200);
+  session->close(200, "{status: \"ok\"}\n");
 }
 
 void WebServer::StartLive(unsigned width, unsigned height, unsigned bitrate, unsigned fps, const std::string& server, unsigned port)

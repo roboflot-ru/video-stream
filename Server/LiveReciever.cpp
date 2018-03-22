@@ -3,13 +3,14 @@
 
 #include <iostream>
 
-// 1 sec for 1MB bitrate
-const unsigned MaxPayloadBufferSize = 128*1024;
+// 3 sec for 1MB bitrate
+const unsigned MaxPayloadBufferSize = 3*128*1024;
 
-LiveReciever::LiveReciever(unsigned portIn, unsigned portOut)
+LiveReciever::LiveReciever(unsigned portIn, unsigned portOut, const std::string& uid)
   : Canceled(false)
+  , Started(false)
   , PayloadBuffer(MaxPayloadBufferSize)
-  , RtspLive(PayloadBuffer, portOut)
+  , RtspLive(PayloadBuffer, portOut, uid)
   , ListenSocket(portIn)
   , PrevPacketNumber(0)
 {
@@ -99,11 +100,12 @@ void LiveReciever::WriteNextPacket(unsigned char* data, unsigned size)
     }
     PayloadBuffer.Add(&Header[0], Header.size());
   }
-  else if (PayloadBuffer.GetDataSize() == 0)
+  else if (!Started)
   {
     return;
   }
 
+  Started = true;
   PayloadBuffer.Add(data, size);
 }
 

@@ -3,6 +3,10 @@
 #include "GroupsockHelper.hh"
 #include <iostream>
 
+extern "C" {
+#include <unistd.h> //sleep
+}
+
 PacketFrameSource::PacketFrameSource(UsageEnvironment& env, Buffer& payloadBuffer)
   : FramedSource(env)
   , PayloadBuffer(payloadBuffer)
@@ -15,9 +19,9 @@ PacketFrameSource::~PacketFrameSource()
 
 void PacketFrameSource::doGetNextFrame()
 {
-  if (!PayloadBuffer.GetDataSize())
+  while (!PayloadBuffer.GetDataSize())
   {
-    return;
+    usleep(10);
   }
   fFrameSize = std::min(fMaxSize, PayloadBuffer.GetDataSize());
   memcpy(fTo, PayloadBuffer.GetData(), fFrameSize);
